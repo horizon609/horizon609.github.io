@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> Sublime Text撸android源码的一些姿势 | 首页</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link rel="stylesheet" href="/css/main.css">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="theme-color" content="#2ecc71">
+<link rel="canonical" href="https://horizon609.github.io//jekyll/update/2017/Sublime%20Text%E6%92%B8android%E6%BA%90%E7%A0%81%E7%9A%84%E4%B8%80%E4%BA%9B%E5%A7%BF%E5%8A%BF/">
+<link rel="alternate" type="application/rss+xml" title="首页" href="https://horizon609.github.io//feed.xml" />
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', '']);
+_gaq.push(['_trackPageview']);
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+    <meta name="robots" content="noindex"> <!--=====  Please remove it ! ! !  ======-->
+    <meta name="googlebot" content="noindex"> <!--=====  Please remove it ! ! !  ======-->
+  </head>
+  <body class="single">
+    <main class="container">
+        <header class="site-header">
+  <div class="container txt-center">
+    <nav class="navbar">
+      <ul>
+        <li><a href="/">home</a></li>
+        <li class="divider">&bull;</li>
+        <li><a href="/about">about</a></li>
+        <li class="divider">&bull;</li>
+        <li><a href="/feed.xml" target="_blank"><i class="icon icon-feed"></i> feed</a></li>
+      </ul>
+    </nav>
+    <a href="/" class="author-thumb">
+      <img src="/images/author.jpg" alt="Author thumbnail" class="dot">
+    </a>
+    <h1>Hi, I'm echoplex_x</small></h1>
+    <a class="btn" href="https://github.com/horizon609/horizon609.github.io/archive/master.zip" target="_blank">download</a>
+    <hr class="hr">
+  </div>
+</header>
+        <section class="main-content">
+          <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">Sublime Text撸android源码的一些姿势</h1>
+    <p class="post-meta">Aug 18, 2017</p>
+  </header>
+  <div class="post-content">
+    <p>之前在windows上撸源码都是用source insight。编译完源码后直接引入impl就可以直接看了，跳转通过ctrl+鼠标左键就完成了。其他操作也类似于eclipse，十分愉快。在mac上找了个替代方案。最近刚开始用。初步感觉还不错。记录下配置和基本使用姿势。
+<!--break--></p>
+<p>首先，你需要自备aosp源码、下载sublime text3（废话）然后直接用st的file-&gt;open工程目录。这个时候就是一堆源代码，没有任何跳转关系。这么看起来很不爽，那么我们需要装个插件——Ctags。这个可以帮我们管理所有跳转的关系，到时候直接点进去就可以看方法调用。在安装Ctags之前，先来安装一下Package Control这个插件。</p>
+<h2 id="package-control">安装Package Control</h2>
+<h3 id="view-showconsole">1. 打开控制台：view-&gt;showConsole</h3>
+<h3 id="section">2. 控制台输入一下代码并回车</h3>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">urllib.request</span><span class="o">,</span><span class="n">os</span><span class="o">;</span> <span class="n">pf</span> <span class="o">=</span> <span class="err">&#39;</span><span class="n">Package</span> <span class="n">Control</span><span class="o">.</span><span class="na">sublime</span><span class="o">-</span><span class="n">package</span><span class="err">&#39;</span><span class="o">;</span> <span class="n">ipp</span> <span class="o">=</span> <span class="n">sublime</span><span class="o">.</span><span class="na">installed_packages_path</span><span class="o">();</span> <span class="n">urllib</span><span class="o">.</span><span class="na">request</span><span class="o">.</span><span class="na">install_opener</span><span class="o">(</span> <span class="n">urllib</span><span class="o">.</span><span class="na">request</span><span class="o">.</span><span class="na">build_opener</span><span class="o">(</span> <span class="n">urllib</span><span class="o">.</span><span class="na">request</span><span class="o">.</span><span class="na">ProxyHandler</span><span class="o">())</span> <span class="o">);</span> <span class="n">open</span><span class="o">(</span><span class="n">os</span><span class="o">.</span><span class="na">path</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="n">ipp</span><span class="o">,</span> <span class="n">pf</span><span class="o">),</span> <span class="err">&#39;</span><span class="n">wb</span><span class="err">&#39;</span><span class="o">).</span><span class="na">write</span><span class="o">(</span><span class="n">urllib</span><span class="o">.</span><span class="na">request</span><span class="o">.</span><span class="na">urlopen</span><span class="o">(</span> <span class="err">&#39;</span><span class="nl">http:</span><span class="c1">//sublime.wbond.net/&#39; + pf.replace(&#39; &#39;,&#39;%20&#39;)).read())</span></code></pre></div>
+<h3 id="stpreferencespackage-control">3. 等一会，重启ST，然后到Preferences里面看一下是否有Package Control，有就成功了。</h3>
+<h2 id="ctags">安装Ctags</h2>
+<h3 id="preferencespackage-controlctags">1. preferences→package control:输入ctags并且选择安装</h3>
+<h3 id="navigate-to-definitionctags-rebuild-tags">2. 这时你在打开的文件中，右键菜单中会多一个Navigate to Definition菜单项，在侧左栏的工程/项目文件上右键会看到CTags: Rebuild Tags菜单项</h3>
+<h3 id="ctagsrebuild-tags">3. 这时右键工程选择ctags:rebuild tags，会得到类似下面一个报错</h3>
+<p><img src="http://pahdlppe7.bkt.clouddn.com/Sublime:error.jpeg" alt="" /></p>
+<p>因为这时路径不对，可以重新安装配置一下。具体如下：</p>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">tlhunter</span><span class="nd">@mac</span><span class="o">:~</span> <span class="n">$</span> <span class="n">mkdir</span> <span class="n">ctags</span><span class="o">;</span> <span class="n">cd</span> <span class="n">ctags</span>
+<span class="n">tlhunter</span><span class="nd">@mac</span><span class="o">:~/</span><span class="n">ctags</span> <span class="n">$</span> <span class="n">curl</span> <span class="o">-</span><span class="n">OL</span> <span class="nl">http:</span><span class="c1">//www.thomashunter.name/wp-content/uploads/ctags-5.8.tar.gz</span>
+<span class="n">tlhunter</span><span class="nd">@mac</span><span class="o">:~/</span><span class="n">ctags</span> <span class="n">$</span> <span class="n">tar</span> <span class="n">xzvf</span> <span class="n">ctags</span><span class="o">-</span><span class="mf">5.8</span><span class="o">.</span><span class="na">tar</span><span class="o">.</span><span class="na">gz</span>
+<span class="n">tlhunter</span><span class="nd">@mac</span><span class="o">:~/</span><span class="n">ctags</span> <span class="n">$</span> <span class="n">cd</span> <span class="n">ctags</span><span class="o">-</span><span class="mf">5.8</span>
+<span class="n">tlhunter</span><span class="nd">@mac</span><span class="o">:~/</span><span class="n">ctags</span><span class="o">/</span><span class="n">ctags</span><span class="o">-</span><span class="mf">5.8</span> <span class="n">$</span> <span class="o">./</span><span class="n">configure</span>
+<span class="n">tlhunter</span><span class="nd">@mac</span><span class="o">:~/</span><span class="n">ctags</span><span class="o">/</span><span class="n">ctags</span><span class="o">-</span><span class="mf">5.8</span> <span class="n">$</span> <span class="n">make</span>
+<span class="n">tlhunter</span><span class="nd">@mac</span><span class="o">:~/</span><span class="n">ctags</span><span class="o">/</span><span class="n">ctags</span><span class="o">-</span><span class="mf">5.8</span> <span class="n">$</span> <span class="n">sudo</span> <span class="n">make</span> <span class="n">install</span></code></pre></div>
+<h3 id="tsctags">4. 这个时候就不会报上述错误了。然后来改点TS里的ctags的配置：</h3>
+<p>打开菜单在Preferences(设置)菜单中打开Package Control(插件管理器)settings-&gt;ctags-&gt;settings-user和settings-default，复制所有default里的内容到user里，然后更改user里的command配置项里的内容为：/usr/local/bin/ctags</p>
+<h3 id="ctags-rebuild-tagstags">5. 侧左栏的工程/项目文件上右键执行CTags: Rebuild Tags菜单项，就可以生成.tags文件，说明可以正常工作了</h3>
+<h3 id="ctrlshiftmouse-binding-defaultusermodifierscommandcommander">6. 默认的点击方法跳转的快捷键是ctrl+shift+鼠标左键，我们可以将其修改了，我们把Mouse Binding default中的配置全部复制到user中，然后修改modifiers中的属性，将其全部改为command。以后就可以靠commander这个快捷键一统天下了唔噗噗噗~</h3>
+<h2 id="section-1">一些快捷键</h2>
+<p>Command+P：查找文件</p>
+<p>Command+右键：返回文件或函数跳转的原始位置</p>
+<p>Command+shift+f: 全局搜索</p>
+<p>Command+左键：文件或函数跳转</p>
+<p>Command+R：查找方法</p>
+<h2 id="vim">启用vim模式</h2>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="s">&quot;ignored_packages&quot;</span><span class="o">:</span>
+　<span class="o">[</span>
+　<span class="o">]</span></code></pre></div>
+<h2 id="section-2">参考链接</h2>
+<h3 id="httpyupengt66ywang20160317sublimetext-androidsourceconfighttpjingyanbaiducomarticle48206aeafba820216ad6b3f5html"><a href="http://yupengt66y.wang/2016/03/17/SublimeText-AndroidSourceConfig/http://jingyan.baidu.com/article/48206aeafba820216ad6b3f5.html"></a></h3>
+<h3 id="installing-vim-tagbar-with-macvim-in-os-xhttpsthomashunternamebloginstalling-vim-tagbar-with-macvim-in-os-x"><a href="https://thomashunter.name/blog/installing-vim-tagbar-with-macvim-in-os-x/">Installing VIM Tagbar with MacVIM in OS X</a></h3>
+    <aside class="share">
+      <span>Share this: </span>
+      <a href="http://twitter.com/share?text=Sublime Text撸android源码的一些姿势&amp;url=https://horizon609.github.io//jekyll/update/2017/Sublime%20Text%E6%92%B8android%E6%BA%90%E7%A0%81%E7%9A%84%E4%B8%80%E4%BA%9B%E5%A7%BF%E5%8A%BF/&amp;hashtags=web,dev,blog,soudev&amp;via=nandomoreirame"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <i class="icon icon-twitter-rounded"></i>
+      </a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://horizon609.github.io//jekyll/update/2017/Sublime%20Text%E6%92%B8android%E6%BA%90%E7%A0%81%E7%9A%84%E4%B8%80%E4%BA%9B%E5%A7%BF%E5%8A%BF/"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <i class="icon icon-facebook-rounded"></i>
+      </a>
+    </aside>
+  </div>
+  <hr>
+  <aside id="comments" class="disqus">
+    <h3>Comments</h3>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_shortname = '';
+      var disqus_identifier = '/jekyll/update/2017/Sublime Text撸android源码的一些姿势';
+      var disqus_title = 'Sublime Text撸android源码的一些姿势';
+      var disqus_url = 'https://horizon609.github.io/';
+      /*var disqus_developer = 1;*/
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>
+      Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+    </noscript>
+  </aside>
+</article>
+        </section>
+<div class="clearfix"></div>
+<footer class="site-footer txt-center">
+  <hr>
+  <ul class="social">
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="https://github.com/horizon609" target="_blank"><i class="icon icon-github"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-facebook"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-twitter"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-instagram"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="http://linkedin.com/in/ting-wang-025965111/" target="_blank"><i class="icon icon-linkedin"></i></a></li>
+  </ul>
+  <small>&copy; 2018 All rights reserved. Made with <a href="http://jekyllrb.com" target="_blank">Jekyll</a> and <i class="icon icon-heart"></i></small>
+  <small>by <a href="http://nandomoreira.me" target="_blank">nandomoreira.me</a></small>
+</footer>
+    </main>
+    <a href="https://github.com/horizon609/horizon609.github.io" target="_blank" class="github-corner"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#2ecc71; color:#f7f8f9; position: absolute; top: 0; border: 0; right: 0;"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+  </body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+  <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> EventBus-初始之火 | 首页</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link rel="stylesheet" href="/css/main.css">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="theme-color" content="#2ecc71">
+<link rel="canonical" href="https://horizon609.github.io//jekyll/update/2017/EventBus-%E5%88%9D%E5%A7%8B%E4%B9%8B%E7%81%AB/">
+<link rel="alternate" type="application/rss+xml" title="首页" href="https://horizon609.github.io//feed.xml" />
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', '']);
+_gaq.push(['_trackPageview']);
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+    <meta name="robots" content="noindex"> <!--=====  Please remove it ! ! !  ======-->
+    <meta name="googlebot" content="noindex"> <!--=====  Please remove it ! ! !  ======-->
+  </head>
+  <body class="single">
+    <main class="container">
+        <header class="site-header">
+  <div class="container txt-center">
+    <nav class="navbar">
+      <ul>
+        <li><a href="/">home</a></li>
+        <li class="divider">&bull;</li>
+        <li><a href="/about">about</a></li>
+        <li class="divider">&bull;</li>
+        <li><a href="/feed.xml" target="_blank"><i class="icon icon-feed"></i> feed</a></li>
+      </ul>
+    </nav>
+    <a href="/" class="author-thumb">
+      <img src="/images/author.jpg" alt="Author thumbnail" class="dot">
+    </a>
+    <h1>Hi, I'm echoplex_x</small></h1>
+    <a class="btn" href="https://github.com/horizon609/horizon609.github.io/archive/master.zip" target="_blank">download</a>
+    <hr class="hr">
+  </div>
+</header>
+        <section class="main-content">
+          <article class="post">
+  <header class="post-header">
+    <h1 class="post-title">EventBus-初始之火</h1>
+    <p class="post-meta">Mar 9, 2017</p>
+  </header>
+  <div class="post-content">
+    <h2 id="eventbus">为什么要使用EventBus</h2>
+<ul>
+  <li>
+    <blockquote>
+      <p>目的
+组件间的解耦
+<!--break--></p>
+    </blockquote>
+  </li>
+  <li>
+    <blockquote>
+      <p>与其他同类技术的对比
+java观察者模式</p>
+    </blockquote>
+  </li>
+</ul>
+<p>本地广播管理器（LocalBroadcastManager）</p>
+<p>优点：解耦</p>
+<h3 id="a-api">a. api不够友好</h3>
+<h3 id="b-">b. 强耦合，不易进行单测。因为实现了订阅者接口的类需要把自身注入到被监听的类中去。</h3>
+<h3 id="c-intentintentreceiverupdateprbuild---">c. Intent所导致的运行时类型检测错误。坑：Intent中传递的参数被改变，但是忘记对其他相关Receiver进行update。会导致运行时才被发现，大概提pr被build的时候会不通过- -。</h3>
+<h3 id="d-intent">d. Intent中传递类型受限。</h3>
+<p>而EventBus不但api友好，并且增强了类型安全。因为EventBus使用自定义XXXEvent.java来进行消息传递，故所有参数类型传递错误均在编译器暴露。并且因为传递的是类对象，所以所传递的内容不管怎么复杂化都没事，而通过Intent的时候只能传递些简单参数。</p>
+<h2 id="section">使用姿势</h2>
+<ul>
+  <li>
+    <blockquote>
+      <p>导入组件
+https://github.com/greenrobot/EventBus</p>
+    </blockquote>
+  </li>
+  <li>
+    <blockquote>
+      <p>初始化 EventBus</p>
+    </blockquote>
+  </li>
+</ul>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">EventBus</span><span class="o">.</span><span class="na">getDefault</span><span class="o">();</span> <span class="c1">//自动获取一个application级别的单例EventBus核心类</span></code></pre></div>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">EventBus</span> <span class="n">eventBus</span> <span class="o">=</span> <span class="n">EventBus</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+<span class="o">.</span><span class="na">logNoSubscriberMessages</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+<span class="o">.</span><span class="na">sendNoSubscriberEvent</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
+<span class="o">.</span><span class="na">build</span><span class="o">();</span><span class="c1">//通过Builder模式构建一个满足需求的EventBus核心类</span></code></pre></div>
+<p><a href="http://greenrobot.org/files/eventbus/javadoc/3.0/org/greenrobot/eventbus/EventBusBuilder.html">EventBusBuilder-api文档</a></p>
+<ul>
+  <li>
+    <blockquote>
+      <p>定义事件</p>
+    </blockquote>
+  </li>
+</ul>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessageEvent</span> <span class="o">{</span>
+ <span class="kd">public</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">message</span><span class="o">;</span>
+ <span class="kd">public</span> <span class="nf">MessageEvent</span><span class="o">(</span><span class="n">String</span> <span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+ <span class="k">this</span><span class="o">.</span><span class="na">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">;</span>
+ <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+<ul>
+  <li>
+    <blockquote>
+      <p>监听事件</p>
+    </blockquote>
+  </li>
+</ul>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// This method will be called when a MessageEvent is posted (in the UI thread for Toast)</span>
+<span class="nd">@Subscribe</span><span class="o">(</span><span class="n">threadMode</span> <span class="o">=</span> <span class="n">ThreadMode</span><span class="o">.</span><span class="na">MAIN</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onMessageEvent</span><span class="o">(</span><span class="n">MessageEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getActivity</span><span class="o">(),</span> <span class="n">event</span><span class="o">.</span><span class="na">message</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+<span class="o">}</span>
+<span class="c1">// This method will be called when a SomeOtherEvent is posted</span>
+<span class="nd">@Subscribe</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleSomethingElse</span><span class="o">(</span><span class="n">SomeOtherEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">doSomethingWith</span><span class="o">(</span><span class="n">event</span><span class="o">);</span>
+<span class="o">}</span></code></pre></div>
+<p>订阅者（Subscribers)也需要通过EventBus进行注册/反注册。当注册后订阅者开始接受监听事件，反注册后订阅者结束监听动作。</p>
+<ul>
+  <li>
+    <blockquote>
+      <p>在Activity中注册/反注册</p>
+    </blockquote>
+  </li>
+</ul>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="nd">@Overridepublic</span> <span class="kt">void</span> <span class="nf">onStart</span><span class="o">()</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onStart</span><span class="o">();</span>
+    <span class="n">EventBus</span><span class="o">.</span><span class="na">getDefault</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onStop</span><span class="o">()</span> <span class="o">{</span>
+    <span class="n">EventBus</span><span class="o">.</span><span class="na">getDefault</span><span class="o">().</span><span class="na">unregister</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onStop</span><span class="o">();</span>
+<span class="o">}</span></code></pre></div>
+<ul>
+  <li>
+    <blockquote>
+      <p>发送事件（Post events）
+发送事件可以在代码的任何位置发起，所有已经被注册的订阅者只要是匹配实践类型（event type），都可以接受到事件</p>
+    </blockquote>
+  </li>
+</ul>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">EventBus</span><span class="o">.</span><span class="na">getDefault</span><span class="o">().</span><span class="na">post</span><span class="o">(</span><span class="k">new</span> <span class="nf">MessageEvent</span><span class="o">(</span><span class="s">&quot;Hello everyone!&quot;</span><span class="o">));</span></code></pre></div>
+<h2 id="threadmode">ThreadMode</h2>
+<ul>
+  <li>
+    <blockquote>
+      <p>ThreadMode: POSTING</p>
+    </blockquote>
+  </li>
+</ul>
+<p>默认模式。订阅者（Subscribers）接受的事件（Event）和post的代码在同一个线程中。事件分发同步进行，所有订阅者都只被调用一次。该模式下回调函数应该尽早返回，避免阻塞。</p>
+<ul>
+  <li>
+    <blockquote>
+      <p>ThreadMode: MAIN</p>
+    </blockquote>
+  </li>
+</ul>
+<p>回调函数所在的线程是主线程。所以当post所在线程也是主线程时，跟POSTING没啥区别</p>
+<ul>
+  <li>
+    <blockquote>
+      <p>ThreadMode: BACKGROUND</p>
+    </blockquote>
+  </li>
+</ul>
+<p>回调函数所在的线程在子线程，如果post所在线程是子线程，那么回调和post在同一个线程。如果post所在是主线程，EventBus通过单例后台线程线程分发所有这个Event的序列，所有该模式的回调方法都在同一个线程中执行。该模式下回调函数应该尽早返回，避免阻塞。</p>
+<ul>
+  <li>
+    <blockquote>
+      <p>ThreadMode: ASYNC</p>
+    </blockquote>
+  </li>
+</ul>
+<p>每一个回调函数在一个单独的线程中执行。post事件不会等待回调方法。通常在回调方法中执行一些耗时操作，例如网络访问。EventBus会通过一个线程池，复用其中的线程执行回调函数。</p>
+<h2 id="sticky-events">Sticky Events</h2>
+<ul>
+  <li>
+    <blockquote>
+      <p>sticky是什么</p>
+    </blockquote>
+  </li>
+</ul>
+<p>sticky事件是指在EventBus中被缓存的事件。发送者必须通过调用bus.postSticky(event)将事件进行缓存，EventBus为每个类（class）保存最近一次发送的事件——sticky，后续如果有同类型的事件过来，更新缓存。然后在某个类中，监听者须调用bus.registerSticky(this)以获取缓存的事件。这样做的好处是一个订阅者在注册的时候就可以收到注册前就发送到eventbus中的事件。</p>
+<ul>
+  <li>
+    <blockquote>
+      <p>Stinky Bundles Sticky Events</p>
+    </blockquote>
+  </li>
+</ul>
+<p>把需要保存的配置项放在单独的一些XXXEvent.java中，只需要简单的依赖registerSticky。而不是使用Bundle，在activity或者fragment加载或销毁的时候从onSaveInstanceState(Bundle bundle)和onRestoreInstanceState(Bundle bundle)保存数据或销毁数据。
+<a href="https://github.com/wongcain/EventBus-Config-Demo/">最佳实践</a></p>
+<h2 id="asyncexecutor">AsyncExecutor</h2>
+<p>通过AsyncExecutor.create()创建一个Application范围的实例。在内部可以创建RunnableEx，这个和普通Runnable的区别就是可以在Runnable内部抛出异常，并且被订阅者捕获。</p>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="n">AsyncExecutor</span><span class="o">.</span><span class="na">create</span><span class="o">().</span><span class="na">execute</span><span class="o">(</span>
+    <span class="k">new</span> <span class="n">AsyncExecutor</span><span class="o">.</span><span class="na">RunnableEx</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">LoginException</span> <span class="o">{</span>
+            <span class="c1">// No need to catch any Exception (here: LoginException)</span>
+            <span class="n">remote</span><span class="o">.</span><span class="na">login</span><span class="o">();</span>
+            <span class="n">EventBus</span><span class="o">.</span><span class="na">getDefault</span><span class="o">().</span><span class="na">postSticky</span><span class="o">(</span><span class="k">new</span> <span class="nf">LoggedInEvent</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">);</span></code></pre></div>
+<p>接收</p>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="nd">@Subscribe</span><span class="o">(</span><span class="n">threadMode</span> <span class="o">=</span> <span class="n">ThreadMode</span><span class="o">.</span><span class="na">MAIN</span><span class="o">)</span><span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleLoginEvent</span><span class="o">(</span><span class="n">LoggedInEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// do something</span>
+<span class="o">}</span>
+<span class="nd">@Subscribe</span><span class="o">(</span><span class="n">threadMode</span> <span class="o">=</span> <span class="n">ThreadMode</span><span class="o">.</span><span class="na">MAIN</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleFailureEvent</span><span class="o">(</span><span class="n">ThrowableFailureEvent</span> <span class="n">event</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// do something</span>
+<span class="o">}</span></code></pre></div>
+<p>同时，也可以根据AsyncExecutor.builder()来定制适合需求的异常处理器。可以传入自己的线程池、错误类型。还可以指定给出发生错误时得到相关的context信息。</p>
+<h2 id="section-1">参考来源</h2>
+<p>http://greenrobot.org/eventbus/documentation/</p>
+<p>http://android.jobbole.com/81098/</p>
+<p>http://android.jobbole.com/82049/</p>
+<p>http://bugly.qq.com/bbs/forum.php?mod=viewthread&amp;tid=938</p>
+    <aside class="share">
+      <span>Share this: </span>
+      <a href="http://twitter.com/share?text=EventBus-初始之火&amp;url=https://horizon609.github.io//jekyll/update/2017/EventBus-%E5%88%9D%E5%A7%8B%E4%B9%8B%E7%81%AB/&amp;hashtags=web,dev,blog,soudev&amp;via=nandomoreirame"
+      onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+        <i class="icon icon-twitter-rounded"></i>
+      </a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=https://horizon609.github.io//jekyll/update/2017/EventBus-%E5%88%9D%E5%A7%8B%E4%B9%8B%E7%81%AB/"
+      onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+        <i class="icon icon-facebook-rounded"></i>
+      </a>
+    </aside>
+  </div>
+  <hr>
+  <aside id="comments" class="disqus">
+    <h3>Comments</h3>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+      var disqus_shortname = '';
+      var disqus_identifier = '/jekyll/update/2017/EventBus-初始之火';
+      var disqus_title = 'EventBus-初始之火';
+      var disqus_url = 'https://horizon609.github.io/';
+      /*var disqus_developer = 1;*/
+      (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+    <noscript>
+      Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+    </noscript>
+  </aside>
+</article>
+        </section>
+<div class="clearfix"></div>
+<footer class="site-footer txt-center">
+  <hr>
+  <ul class="social">
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="https://github.com/horizon609" target="_blank"><i class="icon icon-github"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-facebook"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-twitter"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-instagram"></i></a></li>
+        <li><a href="" target="_blank"><i class="icon icon-"></i></a></li>
+        <li><a href="http://linkedin.com/in/ting-wang-025965111/" target="_blank"><i class="icon icon-linkedin"></i></a></li>
+  </ul>
+  <small>&copy; 2018 All rights reserved. Made with <a href="http://jekyllrb.com" target="_blank">Jekyll</a> and <i class="icon icon-heart"></i></small>
+  <small>by <a href="http://nandomoreira.me" target="_blank">nandomoreira.me</a></small>
+</footer>
+    </main>
+    <a href="https://github.com/horizon609/horizon609.github.io" target="_blank" class="github-corner"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#2ecc71; color:#f7f8f9; position: absolute; top: 0; border: 0; right: 0;"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+  </body>
+</html>
